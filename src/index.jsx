@@ -16,10 +16,10 @@ import {
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Header from '@edx/frontend-component-header';
-import Footer from '@edx/frontend-component-footer';
+import Header, { messages as headerMessages } from '@edx/frontend-component-header';
+import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
 
-import messages from './i18n';
+import appMessages from './i18n';
 import configureStore from './data/configureStore';
 
 import './index.scss';
@@ -46,7 +46,11 @@ subscribe(APP_INIT_ERROR, (error) => {
 });
 
 initialize({
-  messages,
+  messages: [
+    appMessages,
+    headerMessages,
+    footerMessages,
+  ],
   hydrateAuthenticatedUser: true,
   handlers: {
     config: () => {
