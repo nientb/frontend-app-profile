@@ -5,19 +5,25 @@ import {
 } from '@edx/paragon';
 import { useHits, useSearchBox } from 'react-instantsearch-hooks-web';
 
-const JobTitleInstantSearch = (props) => {
+const JobTitleInstantSearch = ({ defaultValue, ...props }) => {
   const { refine } = useSearchBox(props);
   const { hits } = useHits(props);
 
-  const [jobInput, setJobInput] = useState('');
+  const [jobInput, setJobInput] = useState(defaultValue || '');
+  const [jobList, setJobList] = useState([]);
 
   const handleAutosuggestChange = (value) => {
     setJobInput(value);
   };
 
   useEffect(() => {
-    refine(jobInput);
-  }, [jobInput, refine]);
+    if (jobInput.length > 0) {
+      refine(jobInput);
+      setJobList(hits);
+      return;
+    }
+    setJobList([]);
+  }, [jobInput, hits, refine]);
 
   return (
     <Form.Autosuggest
@@ -27,7 +33,7 @@ const JobTitleInstantSearch = (props) => {
       autoComplete="off"
       {...props}
     >
-      {hits.map(job => (
+      {jobList.map(job => (
         <Form.AutosuggestOption key={job.id} id={job.name.replaceAll(' ', '-').toLowerCase()}>
           {job.name}
         </Form.AutosuggestOption>
@@ -38,6 +44,7 @@ const JobTitleInstantSearch = (props) => {
 
 JobTitleInstantSearch.propTypes = {
   onSelected: PropTypes.func.isRequired,
+  defaultValue: PropTypes.string.isRequired,
 };
 
 export default JobTitleInstantSearch;
