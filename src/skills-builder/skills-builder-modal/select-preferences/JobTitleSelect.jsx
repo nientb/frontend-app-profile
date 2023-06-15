@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { Form } from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -13,6 +13,7 @@ const JobTitleSelect = () => {
   const { formatMessage } = useIntl();
   const { dispatch, algolia, state } = useContext(SkillsBuilderContext);
   const { searchClient } = algolia;
+  const [jobInput, setJobInput] = useState(state.currentJobTitle || '');
 
   const handleCurrentJobTitleSelect = (value) => {
     dispatch(setCurrentJobTitle(value));
@@ -28,6 +29,10 @@ const JobTitleSelect = () => {
     );
   };
 
+  const handleAutosuggestChange = (value) => {
+    setJobInput(value);
+  };
+
   return (
     <Form.Label>
       <h4 className="mb-3">
@@ -36,9 +41,10 @@ const JobTitleSelect = () => {
       <InstantSearch searchClient={searchClient} indexName={getConfig().ALGOLIA_JOBS_INDEX_NAME}>
         <JobTitleInstantSearch
           onSelected={handleCurrentJobTitleSelect}
+          onChange={handleAutosuggestChange}
           placeholder={formatMessage(messages.jobTitleInputPlaceholderText)}
           data-testid="job-title-select"
-          defaultValue={state.currentJobTitle}
+          jobInput={jobInput}
         />
       </InstantSearch>
     </Form.Label>

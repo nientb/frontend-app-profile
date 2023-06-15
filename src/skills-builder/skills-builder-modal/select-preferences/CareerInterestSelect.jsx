@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
@@ -17,6 +17,7 @@ const CareerInterestSelect = () => {
   const { state, dispatch, algolia } = useContext(SkillsBuilderContext);
   const { careerInterests } = state;
   const { searchClient } = algolia;
+  const [jobInput, setJobInput] = useState('');
 
   const handleCareerInterestSelect = (value) => {
     if (!careerInterests.includes(value) && careerInterests.length < 3) {
@@ -33,6 +34,12 @@ const CareerInterestSelect = () => {
         },
       );
     }
+    setJobInput('');
+    // TODO: verify this behavior with a test
+  };
+
+  const handleAutosuggestChange = (value) => {
+    setJobInput(value);
   };
 
   return (
@@ -45,6 +52,8 @@ const CareerInterestSelect = () => {
           <Configure filters="b2c_opt_in:true" />
           <JobTitleInstantSearch
             onSelected={handleCareerInterestSelect}
+            onChange={handleAutosuggestChange}
+            jobInput={jobInput}
             placeholder={formatMessage(messages.careerInterestInputPlaceholderText)}
             data-testid="career-interest-select"
           />
